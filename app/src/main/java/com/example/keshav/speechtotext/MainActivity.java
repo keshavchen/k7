@@ -1,7 +1,9 @@
 package com.example.keshav.speechtotext;
 
 import android.content.ActivityNotFoundException;
+import android.content.Context;
 import android.content.Intent;
+import android.provider.AlarmClock;
 import android.speech.RecognizerIntent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -41,6 +43,13 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 String txt = txtFld.getText().toString();
                 txtOutput.setText(txt);
+                Intent i = new Intent(AlarmClock.ACTION_SET_ALARM);
+                i.putExtra(AlarmClock.EXTRA_MESSAGE, "New Alarm");
+                i.putExtra(AlarmClock.EXTRA_HOUR, 10);
+                i.putExtra(AlarmClock.EXTRA_MINUTES, 30);
+                i.putExtra(AlarmClock.EXTRA_SKIP_UI,false);
+                startActivity(i);
+
             }
         });
     }
