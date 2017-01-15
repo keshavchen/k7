@@ -11,19 +11,26 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.example.keshav.speechtotext.MainActivity">
-    <LinearLayout
-        android:focusable="true"
-        android:focusableInTouchMode="true"
-        android:layout_width="0px"
-        android:layout_height="0px"/>
 
-    <Button
-        android:layout_width="50dp"
-        android:layout_height="wrap_content"
-        android:background="@android:drawable/ic_btn_speak_now"
-        android:id="@+id/btn_mic"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentEnd="true" />
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true"
+        android:layout_above="@+id/btn_mic"
+        android:focusable="true"
+        android:focusableInTouchMode="true">
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/LinearLayout">
+
+
+    </LinearLayout>
+
+    </ScrollView>
 
     <EditText
         android:layout_width="wrap_content"
@@ -33,9 +40,7 @@
         android:id="@+id/TxtField"
         android:layout_alignParentBottom="true"
         android:layout_alignParentStart="true"
-        android:layout_toStartOf="@+id/txtButton"
-
-        />
+        android:layout_toStartOf="@+id/txtButton" />
 
     <Button
         android:layout_width="50dp"
@@ -48,23 +53,17 @@
         style="@style/Widget.AppCompat.Button"
         tools:background="@android:drawable/ic_menu_send"
         android:background="@android:drawable/ic_menu_send"
-        android:focusableInTouchMode="true" />
-
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentTop="true">
-
-    <LinearLayout
-        android:orientation="vertical"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/LinearLayout">
+         />
 
 
-    </LinearLayout>
 
-    </ScrollView>
+    <Button
+        android:layout_width="50dp"
+        android:layout_height="wrap_content"
+        android:background="@android:drawable/ic_btn_speak_now"
+        android:id="@+id/btn_mic"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true" />
+
 
 </RelativeLayout>

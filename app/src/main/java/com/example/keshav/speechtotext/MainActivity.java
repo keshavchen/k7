@@ -10,6 +10,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.Gravity;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -49,6 +50,8 @@ public class MainActivity extends AppCompatActivity {
 
     LinearLayout layout;
     Socket socket; // socket object
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -114,6 +117,8 @@ public class MainActivity extends AppCompatActivity {
         txtFld = (EditText)findViewById(R.id.TxtField);
         txtButton = (Button)findViewById(R.id.txtButton);
         layout = (LinearLayout)findViewById(R.id.LinearLayout);
+
+
         btnMicrophone.setOnClickListener(new View.OnClickListener(){
 
             @Override
