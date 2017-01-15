@@ -12,6 +12,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.provider.AlarmClock;
 import android.provider.CalendarContract;
+import android.provider.Settings;
 import android.speech.RecognizerIntent;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -144,12 +145,82 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 String txt = txtFld.getText().toString();
                 socket.emit("chat", txt);
+                Calpermission();
                 messageHandler(txt, 1);
 
 
 
             }
         });
+    }
+        private void calEntry(){
+            String eventdate;
+
+            SimpleDateFormat formatter = new SimpleDateFormat("yyyy/MM/dd HH:mm");
+            final Calendar cal = Calendar.getInstance();
+            try {
+
+                cal.setTime(formatter.parse("2017/01/17 05:40"));
+                eventdate = cal.get(Calendar.YEAR)+"/"+cal.get(Calendar.MONTH)+"/"+cal.get(Calendar.DAY_OF_MONTH)+" "+cal.get(Calendar.HOUR_OF_DAY)+":"+cal.get(Calendar.MINUTE);
+                //Log.e("Event date ", eventdate);
+            } catch (Exception e) {
+                Log.e("Catch ", "",e);
+            }
+            int eid;
+            eid=((cal.get(Calendar.YEAR)*100)+(cal.get(Calendar.DAY_OF_MONTH)))*100+cal.get(Calendar.HOUR_OF_DAY);
+            System.out.println(eid);
+
+            ContentValues event = new ContentValues();
+            event.put("calendar_id", 3);
+            event.put("_id", eid);
+            event.put("title", "mytitle2");
+            event.put("description", "mydescription");
+            event.put("eventLocation", "Event Location");
+            event.put("eventTimezone", TimeZone.getDefault().getID());
+            event.put("dtstart", cal.getTimeInMillis());
+            event.put("dtend", cal.getTimeInMillis()+120*60*1000);
+            event.put("hasAlarm", 0);
+
+
+
+            Uri eventUri = getApplicationContext()
+                    .getContentResolver()
+                    .insert(Uri.parse("content://com.android.calendar/events"), event);
+            Toast.makeText(this,"Event set",Toast.LENGTH_LONG).show();
+        }
+    private void Calpermission(){
+        int MY_PERMISSIONS_REQUEST_WRITE_CALENDAR=1;
+
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_CALENDAR) != PackageManager.PERMISSION_GRANTED) {
+
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.WRITE_CALENDAR},
+                    MY_PERMISSIONS_REQUEST_WRITE_CALENDAR);
+        }
+        else calEntry();
+    }
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case 1: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+                    calEntry();
+
+                } else {
+
+                    // permission denied, boo! Disable the
+                    // functionality that depends on this permission.
+                }
+                return;
+            }
+
+            // other 'case' lines to check for other
+            // permissions this app might request
+        }
     }
 
     private void setAlarmClock(String date, String time) {
@@ -207,36 +278,7 @@ public class MainActivity extends AppCompatActivity {
 
 
     private void speechtotext() {
-        String eventdate;
 
-            SimpleDateFormat formatter = new SimpleDateFormat("yyyy/MM/dd HH:mm");
-            final Calendar cal = Calendar.getInstance();
-            try {
-
-                cal.setTime(formatter.parse("2017/01/17 05:40"));
-                eventdate = cal.get(Calendar.YEAR)+"/"+cal.get(Calendar.MONTH)+"/"+cal.get(Calendar.DAY_OF_MONTH)+" "+cal.get(Calendar.HOUR_OF_DAY)+":"+cal.get(Calendar.MINUTE);
-                //Log.e("Event date ", eventdate);
-            } catch (Exception e) {
-                Log.e("Catch ", "",e);
-            }
-
-            ContentValues event = new ContentValues();
-            event.put("calendar_id", 3);
-            event.put("_id", 3);
-            event.put("title", "mytitle2");
-            event.put("description", "mydescription");
-            event.put("eventLocation", "Event Location");
-            event.put("eventTimezone", TimeZone.getDefault().getID());
-            event.put("dtstart", cal.getTimeInMillis());
-            event.put("dtend", cal.getTimeInMillis()+120*60*1000);
-            event.put("hasAlarm", 0);
-
-
-
-            Uri eventUri = getApplicationContext()
-                    .getContentResolver()
-                    .insert(Uri.parse("content://com.android.calendar/events"), event);
-            Toast.makeText(this,"Event set",Toast.LENGTH_LONG).show();
 
 
 
