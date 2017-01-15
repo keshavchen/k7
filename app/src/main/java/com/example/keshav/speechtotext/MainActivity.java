@@ -57,10 +57,11 @@ public class MainActivity extends AppCompatActivity {
     private Button txtButton;
     private EditText mInputMessageView;
 
+
     public static String internalPath; // internal storage path
     public static String fileName; // the file name
 
-    static String trigger_sentence, message, date, time, intent_code;
+    static String trigger_sentence, message, date, time, intent_code,hours,minutes,minutes_only;
 
 
     LinearLayout layout;
@@ -104,10 +105,11 @@ public class MainActivity extends AppCompatActivity {
 
                             JSONObject temp = j.getJSONObject("result");
                             message = temp.getString("message");
-                            date = temp.getString("date");
-                            time = temp.getString("time");
+                            hours = temp.getString("hours");
+                            minutes = temp.getString("minutes");
+                            minutes_only = temp.getString("minutes_only");
                             messageHandler(message, 0);
-                            setAlarmClock(date, time);
+                            setAlarmClock(hours,minutes,minutes_only);
 
 
                         } catch (JSONException e) {
@@ -223,13 +225,13 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void setAlarmClock(String date, String time) {
-        String[] parts = time.split(":");
-        String part1 = parts[0];
-        String part2 = parts[1];
+    private void setAlarmClock(String hour, String minute,String minutes_only) {
 
-        int hours = Integer.parseInt(part1);
-        int minutes = Integer.parseInt(part2);
+
+
+        int hours = Integer.parseInt(hour);
+
+        int minutes = Integer.parseInt(minute);
         Intent i = new Intent(AlarmClock.ACTION_SET_ALARM);
         i.putExtra(AlarmClock.EXTRA_MESSAGE, "Set by Jarvis");
         i.putExtra(AlarmClock.EXTRA_HOUR, hours);
