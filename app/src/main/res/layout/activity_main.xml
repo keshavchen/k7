@@ -10,49 +10,52 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.example.keshav.speechtotext.MainActivity">
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="110dp"
-        android:textSize="25dp"
-        android:id="@+id/txt_output" />
 
-    <ImageButton
-        android:layout_width="wrap_content"
+    <Button
+        android:layout_width="50dp"
         android:layout_height="wrap_content"
-        app:srcCompat="@android:drawable/ic_btn_speak_now"
+        android:background="@android:drawable/ic_btn_speak_now"
+        android:id="@+id/btn_mic"
         android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="107dp"
-        android:id="@+id/btn_mic" />
+        android:layout_alignParentEnd="true" />
 
     <EditText
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:inputType="textPersonName"
         android:ems="10"
-        android:layout_below="@+id/txt_output"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="34dp"
-        android:id="@+id/TxtField" />
+        android:id="@+id/TxtField"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentStart="true"
+        android:layout_toStartOf="@+id/txtButton" />
 
     <Button
-        android:text="Text Input"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/TxtField"
-        android:layout_centerHorizontal="true"
-        android:id="@+id/txtButton" />
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:id="@+id/txtButton"
+        android:elevation="0dp"
+        android:layout_alignParentBottom="true"
+        android:layout_toStartOf="@+id/btn_mic"
+        android:layout_marginEnd="15dp"
+        style="@style/Widget.AppCompat.Button"
+        tools:background="@android:drawable/ic_menu_send"
+        android:background="@android:drawable/ic_menu_send" />
 
-    <TextView
-        android:text="OR"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/btn_mic"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="14dp"
-        android:id="@+id/textView"
-        android:textSize="25dp"/>
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentTop="true">
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/LinearLayout">
+
+
+    </LinearLayout>
+
+    </ScrollView>
+
 </RelativeLayout>
