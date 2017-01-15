@@ -148,8 +148,9 @@ public class MainActivity extends AppCompatActivity {
         i.putExtra(AlarmClock.EXTRA_MINUTES, minutes);
         i.putExtra(AlarmClock.EXTRA_SKIP_UI, true);
         startActivity(i);
-        messageHandler("Alarm has been set at "+hours,0);
+        messageHandler("Alarm has been set at " + hours, 0);
     }
+
 
     private void messageHandler(String message,int person){
         TextView t = new TextView(MainActivity.this);
