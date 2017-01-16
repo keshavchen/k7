@@ -76,7 +76,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         try {
-            socket = IO.socket("http://192.168.1.2:9000");
+            socket = IO.socket("http://104.199.174.3:9000");
         } catch (URISyntaxException e) {
             e.printStackTrace();
         }
