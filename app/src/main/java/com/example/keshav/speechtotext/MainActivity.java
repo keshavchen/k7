@@ -28,6 +28,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -66,6 +67,7 @@ public class MainActivity extends AppCompatActivity {
 
     LinearLayout layout;
     Socket socket; // socket object
+    ScrollView scrollView;
 
 
     @Override
@@ -108,7 +110,7 @@ public class MainActivity extends AppCompatActivity {
                             hours = temp.getString("hours");
                             minutes = temp.getString("minutes");
                             minutes_only = temp.getString("minutes_only");
-                            messageHandler(message, 0);
+
                             setAlarmClock(hours,minutes,minutes_only);
 
 
@@ -131,6 +133,7 @@ public class MainActivity extends AppCompatActivity {
         txtFld = (EditText) findViewById(R.id.TxtField);
         txtButton = (Button) findViewById(R.id.txtButton);
         layout = (LinearLayout) findViewById(R.id.LinearLayout);
+        scrollView  = (ScrollView)findViewById(R.id.scrollView);
 
 
         btnMicrophone.setOnClickListener(new View.OnClickListener() {
@@ -275,7 +278,10 @@ public class MainActivity extends AppCompatActivity {
         layoutParams.setMargins(0, 10, 0, 0);
         layout.addView(t);
 
+        scrollView.fullScroll(ScrollView.FOCUS_DOWN);
         layout.invalidate();
+
+
     }
 
 
