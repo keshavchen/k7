@@ -2,6 +2,7 @@ package com.example.keshav.speechtotext;
 
 import android.Manifest;
 import android.app.ActionBar;
+import android.app.Application;
 import android.content.ActivityNotFoundException;
 import android.content.ContentResolver;
 import android.content.ContentValues;
@@ -9,6 +10,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.net.Uri;
 import android.provider.AlarmClock;
 import android.provider.CalendarContract;
@@ -50,6 +52,9 @@ import org.json.JSONObject;
 import org.w3c.dom.Text;
 
 
+
+
+
 public class MainActivity extends AppCompatActivity {
     private final int SPEECH_RECOGNITION_CODE = 1;
     private final int CAL_EVENT_RECOGNITION_CODE=2;
@@ -70,7 +75,8 @@ public class MainActivity extends AppCompatActivity {
     LinearLayout layout;
     Socket socket; // socket object
     ScrollView scrollView;
-
+    int incomplete_flag = 0;
+    String buffer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,11 +91,9 @@ public class MainActivity extends AppCompatActivity {
 
         super.onCreate(savedInstanceState);
 
-        try {
-            socket = IO.socket("http://104.199.174.3:9000");
-        } catch (URISyntaxException e) {
-            e.printStackTrace();
-        }
+        SocketHandler.setSocket();
+        socket = SocketHandler.getSocket();
+
 
         socket.on(Socket.EVENT_CONNECT, new Emitter.Listener() {
 
@@ -126,14 +130,12 @@ public class MainActivity extends AppCompatActivity {
                                     setAlarmClock(hours, minutes, minutes_only);
                                 }break;
                                 case 2: {
-                                    date = temp.getString("date");
-                                    time = temp.getString("time");
-                                    title = temp.getString("desc");
-
+                                    //date = temp.getString("date");
+                                    //time = temp.getString("time");
+                                    //title = temp.getString("desc");
                                     Intent CE= new Intent(MainActivity.this,CalendarEvent.class);
-                                    CE.putExtra("date",date);
-                                    CE.putExtra("time",time);
-                                    CE.putExtra("title",title);
+                                    CE.putExtra("json",temp.toString());
+
 
                                     startActivityForResult(CE,CAL_EVENT_RECOGNITION_CODE);
 
@@ -163,6 +165,7 @@ public class MainActivity extends AppCompatActivity {
         scrollView  = (ScrollView)findViewById(R.id.scrollView);
 
 
+
         btnMicrophone.setOnClickListener(new View.OnClickListener() {
 
             @Override
@@ -176,7 +179,11 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 String txt = txtFld.getText().toString();
-                socket.emit("chat", txt);
+                if(incomplete_flag==0){
+                    socket.emit("chat", txt);
+                }else{
+                    requestDayandTime(txt);
+                }
 
                 messageHandler(txt, 1);
 
@@ -206,7 +213,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    private void messageHandler(String message, int person) {
+    public void messageHandler(String message, int person) {
         TextView t = new TextView(MainActivity.this);
         if (person == 1) {
             t.setBackgroundResource(R.drawable.rounded_corner);
@@ -214,6 +221,7 @@ public class MainActivity extends AppCompatActivity {
             t.setBackgroundResource(R.drawable.rounded_corner1);
         }
         t.setText(message);
+        t.setTextColor(Color.WHITE);
 
         final float scale = getResources().getDisplayMetrics().density;
         int padding_5dp = (int) (5 * scale + 0.5f);
@@ -244,7 +252,6 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-
     private void speechtotext() {
 
 
@@ -273,16 +280,48 @@ public class MainActivity extends AppCompatActivity {
                 if(resultCode == RESULT_OK && null!= data) {
                     ArrayList<String> result = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
                     String text = result.get(0);
-                    socket.emit("chat",text);
+                    if(incomplete_flag==0){
+                        socket.emit("chat", text);
+                    }else{
+                        requestDayandTime(text);
+                    }
+
+
                     messageHandler(text,1);
 
                 }
 
         }
         else if(requestCode == CAL_EVENT_RECOGNITION_CODE){
-            Toast.makeText(this,"Event set.woohoo",Toast.LENGTH_LONG).show();
+
+            if(resultCode == RESULT_OK && null!= data) {
+                if(data.getStringExtra("error-code").equals("0")){
+                    String myValue = data.getStringExtra("message");
+                    messageHandler(myValue,0);
+                }
+                else if(data.getStringExtra("error-code").equals("1")){
+                    String orginal_input = data.getStringExtra("original_input");
+                    String message = data.getStringExtra("message");
+                    messageHandler(message,0);
+                    incomplete_flag=1;
+                    buffer = orginal_input;
+
+                }
+
+
+            }
         }
     }
+
+    public void requestDayandTime(String input){
+
+        String final_input  = buffer.concat(" "+input);
+        socket.emit("chat", final_input);
+        buffer="";
+        incomplete_flag= 0;
+
+    }
+
 
 
     @Override
