@@ -52,6 +52,7 @@ import org.w3c.dom.Text;
 
 public class MainActivity extends AppCompatActivity {
     private final int SPEECH_RECOGNITION_CODE = 1;
+    private final int CAL_EVENT_RECOGNITION_CODE=2;
     private TextView txtOutput;
     private Button btnMicrophone;
     private EditText txtFld;
@@ -62,8 +63,9 @@ public class MainActivity extends AppCompatActivity {
     public static String internalPath; // internal storage path
     public static String fileName; // the file name
 
-    static String trigger_sentence, message, date, time, intent_code,hours,minutes,minutes_only;
-
+    static String trigger_sentence, message, date, time,hours,minutes,minutes_only,title;
+    int MY_PERMISSIONS_REQUEST_WRITE_CALENDAR=1;
+    int intent_code;
 
     LinearLayout layout;
     Socket socket; // socket object
@@ -72,6 +74,14 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        //Getting Calendar write permission
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_CALENDAR) != PackageManager.PERMISSION_GRANTED) {
+
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.WRITE_CALENDAR},
+                    MY_PERMISSIONS_REQUEST_WRITE_CALENDAR);
+        }
+
 
         super.onCreate(savedInstanceState);
 
@@ -106,12 +116,29 @@ public class MainActivity extends AppCompatActivity {
                             JSONObject j = new JSONObject((String) args[0]);
 
                             JSONObject temp = j.getJSONObject("result");
-                            message = temp.getString("message");
-                            hours = temp.getString("hours");
-                            minutes = temp.getString("minutes");
-                            minutes_only = temp.getString("minutes_only");
+                            intent_code = temp.getInt("intent_code");
+                            switch(intent_code) {
+                                case 1: {
+                                    message = temp.getString("message");
+                                    hours = temp.getString("hours");
+                                    minutes = temp.getString("minutes");
+                                    minutes_only = temp.getString("minutes_only");
+                                    setAlarmClock(hours, minutes, minutes_only);
+                                }break;
+                                case 2: {
+                                    date = temp.getString("date");
+                                    time = temp.getString("time");
+                                    title = temp.getString("desc");
 
-                            setAlarmClock(hours,minutes,minutes_only);
+                                    Intent CE= new Intent(MainActivity.this,CalendarEvent.class);
+                                    CE.putExtra("date",date);
+                                    CE.putExtra("time",time);
+                                    CE.putExtra("title",title);
+
+                                    startActivityForResult(CE,CAL_EVENT_RECOGNITION_CODE);
+
+                                }
+                            }
 
 
                         } catch (JSONException e) {
@@ -150,7 +177,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 String txt = txtFld.getText().toString();
                 socket.emit("chat", txt);
-                Calpermission();
+
                 messageHandler(txt, 1);
 
 
@@ -158,75 +185,8 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
-        private void calEntry(){
-            String eventdate;
-
-            SimpleDateFormat formatter = new SimpleDateFormat("yyyy/MM/dd HH:mm");
-            final Calendar cal = Calendar.getInstance();
-            try {
-
-                cal.setTime(formatter.parse("2017/01/17 05:40"));
-                eventdate = cal.get(Calendar.YEAR)+"/"+cal.get(Calendar.MONTH)+"/"+cal.get(Calendar.DAY_OF_MONTH)+" "+cal.get(Calendar.HOUR_OF_DAY)+":"+cal.get(Calendar.MINUTE);
-                //Log.e("Event date ", eventdate);
-            } catch (Exception e) {
-                Log.e("Catch ", "",e);
-            }
-            int eid;
-            eid=((cal.get(Calendar.YEAR)*100)+(cal.get(Calendar.DAY_OF_MONTH)))*100+cal.get(Calendar.HOUR_OF_DAY);
-            System.out.println(eid);
-
-            ContentValues event = new ContentValues();
-            event.put("calendar_id", 3);
-            event.put("_id", eid);
-            event.put("title", "mytitle2");
-            event.put("description", "mydescription");
-            event.put("eventLocation", "Event Location");
-            event.put("eventTimezone", TimeZone.getDefault().getID());
-            event.put("dtstart", cal.getTimeInMillis());
-            event.put("dtend", cal.getTimeInMillis()+120*60*1000);
-            event.put("hasAlarm", 0);
 
 
-
-            Uri eventUri = getApplicationContext()
-                    .getContentResolver()
-                    .insert(Uri.parse("content://com.android.calendar/events"), event);
-            Toast.makeText(this,"Event set",Toast.LENGTH_LONG).show();
-        }
-    private void Calpermission(){
-        int MY_PERMISSIONS_REQUEST_WRITE_CALENDAR=1;
-
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_CALENDAR) != PackageManager.PERMISSION_GRANTED) {
-
-            ActivityCompat.requestPermissions(this,
-                    new String[]{Manifest.permission.WRITE_CALENDAR},
-                    MY_PERMISSIONS_REQUEST_WRITE_CALENDAR);
-        }
-        else calEntry();
-    }
-    @Override
-    public void onRequestPermissionsResult(int requestCode,
-                                           String permissions[], int[] grantResults) {
-        switch (requestCode) {
-            case 1: {
-                // If request is cancelled, the result arrays are empty.
-                if (grantResults.length > 0
-                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-
-                    calEntry();
-
-                } else {
-
-                    // permission denied, boo! Disable the
-                    // functionality that depends on this permission.
-                }
-                return;
-            }
-
-            // other 'case' lines to check for other
-            // permissions this app might request
-        }
-    }
 
     private void setAlarmClock(String hour, String minute,String minutes_only) {
 
@@ -318,6 +278,9 @@ public class MainActivity extends AppCompatActivity {
 
                 }
 
+        }
+        else if(requestCode == CAL_EVENT_RECOGNITION_CODE){
+            Toast.makeText(this,"Event set.woohoo",Toast.LENGTH_LONG).show();
         }
     }
 
