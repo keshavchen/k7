@@ -80,6 +80,13 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+        if ((getIntent().getFlags() & Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT) != 0) {
+            // Activity was brought to front and not created,
+            // Thus finishing this will get us to the last viewed activity
+            finish();
+            return;
+        }
         //Getting Calendar write permission
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_CALENDAR) != PackageManager.PERMISSION_GRANTED) {
 
@@ -179,6 +186,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 String txt = txtFld.getText().toString();
+                txtFld.setText("");
                 if(incomplete_flag==0){
                     socket.emit("chat", txt);
                 }else{
@@ -215,6 +223,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void messageHandler(String message, int person) {
         TextView t = new TextView(MainActivity.this);
+
         if (person == 1) {
             t.setBackgroundResource(R.drawable.rounded_corner);
         } else {
