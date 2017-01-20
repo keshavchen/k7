@@ -30,6 +30,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -72,6 +73,7 @@ public class MainActivity extends AppCompatActivity {
     int MY_PERMISSIONS_REQUEST_WRITE_CALENDAR=1;
     int intent_code;
 
+    ProgressBar pbar;
     LinearLayout layout;
     Socket socket; // socket object
     ScrollView scrollView;
@@ -116,6 +118,7 @@ public class MainActivity extends AppCompatActivity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
+                        removeLoadingIcon();
                         try {
                             JSONObject j = new JSONObject((String) args[0]);
 
@@ -181,6 +184,7 @@ public class MainActivity extends AppCompatActivity {
                 String txt = txtFld.getText().toString();
                 if(incomplete_flag==0){
                     socket.emit("chat", txt);
+
                 }else{
                     requestDayandTime(txt);
                 }
@@ -214,6 +218,7 @@ public class MainActivity extends AppCompatActivity {
 
 
     public void messageHandler(String message, int person) {
+
         TextView t = new TextView(MainActivity.this);
         if (person == 1) {
             t.setBackgroundResource(R.drawable.rounded_corner);
@@ -247,9 +252,36 @@ public class MainActivity extends AppCompatActivity {
         layout.addView(t);
 
         scrollView.fullScroll(ScrollView.FOCUS_DOWN);
+        if(person==1) {
+            showLoadingIcon();
+        }
+
         layout.invalidate();
 
 
+    }
+
+    public void showLoadingIcon(){
+        pbar  = new ProgressBar(MainActivity.this,null,android.R.attr.progressBarStyleSmall);
+        pbar.setLayoutParams(new LinearLayout.LayoutParams(
+               LinearLayout.LayoutParams.WRAP_CONTENT,
+              LinearLayout.LayoutParams.WRAP_CONTENT
+        ));
+
+        LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) pbar.getLayoutParams();
+        layoutParams.gravity= Gravity.LEFT;
+        layoutParams.setMargins(0, 50, 0, 0);
+        layout.addView(pbar);
+
+
+
+
+
+
+    }
+    public void removeLoadingIcon(){
+        layout.removeView(pbar);
+        layout.invalidate();
     }
 
     private void speechtotext() {
@@ -282,6 +314,7 @@ public class MainActivity extends AppCompatActivity {
                     String text = result.get(0);
                     if(incomplete_flag==0){
                         socket.emit("chat", text);
+
                     }else{
                         requestDayandTime(text);
                     }
@@ -317,6 +350,7 @@ public class MainActivity extends AppCompatActivity {
 
         String final_input  = buffer.concat(" "+input);
         socket.emit("chat", final_input);
+
         buffer="";
         incomplete_flag= 0;
 
