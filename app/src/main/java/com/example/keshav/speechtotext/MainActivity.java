@@ -154,6 +154,10 @@ public class MainActivity extends AppCompatActivity {
                                     startActivityForResult(CE,CAL_EVENT_RECOGNITION_CODE);
 
                                 }
+                                case 3: {
+                                    message = temp.getString("message");
+                                    messageHandler(message,0);
+                                }
                             }
 
 
