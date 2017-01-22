@@ -59,6 +59,7 @@ import org.w3c.dom.Text;
 public class MainActivity extends AppCompatActivity {
     private final int SPEECH_RECOGNITION_CODE = 1;
     private final int CAL_EVENT_RECOGNITION_CODE=2;
+    private final int ALARM_EVENT_RECOGNITION_CODE=3;
     private TextView txtOutput;
     private Button btnMicrophone;
     private EditText txtFld;
@@ -133,11 +134,14 @@ public class MainActivity extends AppCompatActivity {
                             intent_code = temp.getInt("intent_code");
                             switch(intent_code) {
                                 case 1: {
-                                    message = temp.getString("message");
-                                    hours = temp.getString("hours");
-                                    minutes = temp.getString("minutes");
-                                    minutes_only = temp.getString("minutes_only");
-                                    setAlarmClock(hours, minutes, minutes_only);
+                                    Intent AE= new Intent(MainActivity.this,AlarmEvent.class);
+                                    AE.putExtra("json",temp.toString());
+                                    startActivityForResult(AE,ALARM_EVENT_RECOGNITION_CODE);
+                                 //   message = temp.getString("message");
+                                 //   hours = temp.getString("hours");
+                                 //   minutes = temp.getString("minutes");
+                                //    minutes_only = temp.getString("minutes_only");
+                                  //  setAlarmClock(hours, minutes, minutes_only);
                                 }break;
                                 case 2: {
                                     //date = temp.getString("date");
@@ -351,6 +355,21 @@ public class MainActivity extends AppCompatActivity {
                 }
 
 
+            }
+        }
+        else if (requestCode == ALARM_EVENT_RECOGNITION_CODE){
+            if (resultCode == RESULT_OK && null!= data){
+                 if(data.getStringExtra("error-code").equals("0")){
+                     String myValue = data.getStringExtra("message");
+                     messageHandler(myValue,0);
+                 }
+                 else if(data.getStringExtra("error-code").equals("1")){
+                     String orginal_input = data.getStringExtra("original_input");
+                     String message = data.getStringExtra("message");
+                     messageHandler(message,0);
+                     incomplete_flag=1;
+                     buffer = orginal_input;
+                 }
             }
         }
     }
