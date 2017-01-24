@@ -70,7 +70,7 @@ public class MainActivity extends AppCompatActivity {
     public static String internalPath; // internal storage path
     public static String fileName; // the file name
 
-    static String trigger_sentence, message, date, time,hours,minutes,minutes_only,title;
+    static String trigger_sentence, message, date, time,hours,minutes,minutes_only,title,type,videoId,playlistId;
     int MY_PERMISSIONS_REQUEST_WRITE_CALENDAR=1;
     int intent_code;
 
@@ -157,6 +157,30 @@ public class MainActivity extends AppCompatActivity {
                                 case 3: {
                                     message = temp.getString("message");
                                     messageHandler(message,0);
+                                }
+                                //YOUTUBE ADAPTER
+                                case 4: {
+                                    type  = temp.getString("type");
+                                    if(type.equals("video")){
+                                        message = temp.getString("message");
+                                        messageHandler(message,0);
+                                        Intent videoClient = new Intent(Intent.ACTION_VIEW);
+                                        videoId = temp.getString("video_id");
+                                        videoClient.setData(Uri.parse("http://m.youtube.com/watch?v="+videoId));
+                                        startActivity(videoClient);
+
+                                    }
+                                    else{
+                                        message = temp.getString("message");
+                                        messageHandler(message,0);
+
+                                        videoId = temp.getString("firstVideo_id");
+                                        Intent videoClient = new Intent(Intent.ACTION_VIEW);
+                                        playlistId = temp.getString("video_id");
+
+                                        videoClient.setData(Uri.parse("http://m.youtube.com/watch?v="+videoId+"&list="+playlistId));
+                                        startActivity(videoClient);
+                                    }
                                 }
                             }
 
