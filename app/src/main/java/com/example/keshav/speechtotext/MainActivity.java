@@ -60,6 +60,7 @@ public class MainActivity extends AppCompatActivity {
     private final int SPEECH_RECOGNITION_CODE = 1;
     private final int CAL_EVENT_RECOGNITION_CODE=2;
     private final int ALARM_EVENT_RECOGNITION_CODE=3;
+    private final int PC_EVENT_CODE=4;
     private TextView txtOutput;
     private Button btnMicrophone;
     private EditText txtFld;
@@ -72,6 +73,9 @@ public class MainActivity extends AppCompatActivity {
 
     static String trigger_sentence, message, date, time,hours,minutes,minutes_only,title,type,videoId,playlistId;
     int MY_PERMISSIONS_REQUEST_WRITE_CALENDAR=1;
+    int MY_PERMISSIONS_REQUEST_READ_CONTACTS=1;
+    int MY_PERMISSIONS_REQUEST_CALL_PHONE=1;
+
     int intent_code;
 
     ProgressBar pbar;
@@ -96,6 +100,18 @@ public class MainActivity extends AppCompatActivity {
             ActivityCompat.requestPermissions(this,
                     new String[]{Manifest.permission.WRITE_CALENDAR},
                     MY_PERMISSIONS_REQUEST_WRITE_CALENDAR);
+        }
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_CONTACTS) != PackageManager.PERMISSION_GRANTED) {
+
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.READ_CONTACTS},
+                    MY_PERMISSIONS_REQUEST_READ_CONTACTS);
+        }
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.CALL_PHONE},
+                    MY_PERMISSIONS_REQUEST_CALL_PHONE);
         }
 
 
@@ -182,6 +198,16 @@ public class MainActivity extends AppCompatActivity {
                                         startActivity(videoClient);
                                     }
                                 }
+                                //PHONE CALL EVENT
+                                case 5:{
+                                    Intent PC=new Intent(MainActivity.this,PhoneCall.class);
+                                    String name=temp.getString("name");
+                                    PC.putExtra("name",name);
+                                    startActivityForResult(PC,PC_EVENT_CODE);
+
+
+                                }
+
                             }
 
 
@@ -343,6 +369,7 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(getApplicationContext(),"not supported",Toast.LENGTH_SHORT).show();
         }
 
+
     }
 
 
@@ -399,6 +426,11 @@ public class MainActivity extends AppCompatActivity {
                      buffer = orginal_input;
                  }
             }
+        }
+        else if (requestCode == PC_EVENT_CODE){
+            if (resultCode == RESULT_OK && null!= data){}
+                else{ Toast.makeText(MainActivity.this,"unsaved",Toast.LENGTH_SHORT).show();
+                    }
         }
     }
 
