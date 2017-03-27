@@ -4,7 +4,6 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/Speechtotext.iml" filepath="$PROJECT_DIR$/Speechtotext.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
-      <module fileurl="file://$PROJECT_DIR$/jarvis-android-app.iml" filepath="$PROJECT_DIR$/jarvis-android-app.iml" />
     </modules>
   </component>
 </project>
